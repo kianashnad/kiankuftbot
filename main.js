@@ -1,10 +1,18 @@
 import * as dotenv from 'dotenv'
 dotenv.config()
+
 import {Telegraf} from 'telegraf';
 import {parse} from "dotenv";
 
 const bot = new Telegraf(process.env.KIANO_KUFT_BOT_TOKEN);
 console.log(`Bot Token => ${process.env.KIANO_KUFT_BOT_TOKEN}`)
+
+const groupID = parseInt(process.env.KIANO_KUFT_TG_GROUP_ID)
+console.log("groupID",groupID)
+
+const keywords = process.env.KIANO_KUFT_KEYWORDS.toLowerCase().split(",")
+console.log("keywords",keywords)
+
 
 let lastReplyArrayIndex = -1
 
@@ -43,8 +51,7 @@ const kermuSpecialMessages = [
   'بسه دیگه😡',
   '😡',
 ]
-const groupID = parseInt(process.env.KIANO_KUFT_TG_GROUP_ID)
-const keywords = process.env.KIANO_KUFT_KEYWORDS.toLowerCase().split(",")
+
 
 function includesKeywords(targetString) {
   const _targetString = targetString.toLowerCase().split(" ")
