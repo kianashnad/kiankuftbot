@@ -1,18 +1,26 @@
 import * as dotenv from 'dotenv'
+
 dotenv.config()
 
 import {Telegraf} from 'telegraf';
-import {parse} from "dotenv";
 
 const bot = new Telegraf(process.env.KIANO_KUFT_BOT_TOKEN);
 console.log(`Bot Token => ${process.env.KIANO_KUFT_BOT_TOKEN}`)
 
 const groupID = parseInt(process.env.KIANO_KUFT_TG_GROUP_ID)
-console.log("groupID",groupID)
+console.log("groupID", groupID)
 
 const keywords = process.env.KIANO_KUFT_KEYWORDS.toLowerCase().split(",")
-console.log("keywords",keywords)
+console.log("keywords", keywords)
 
+const kermThreshold = parseInt(process.env.KIANO_KUFT_KERM_THRESHOLD)
+console.log("kermThreshold", kermThreshold)
+
+const resetKermInMinutes = parseInt(process.env.KIANO_KUFT_RESET_KERMU_LIST_IN_MINUTES)
+console.log("resetKermInMinutes", resetKermInMinutes)
+
+const mentionUsername = process.env.KIANO_KUFT_MENTION_USERNAME
+console.log("mentionUsername", mentionUsername)
 
 let lastReplyArrayIndex = -1
 
@@ -63,17 +71,18 @@ function includesKeywords(targetString) {
 }
 
 let userKermCount = []
-const kermThreshold = process.env.KIANO_KUFT_KERM_THRESHOLD
 
 function addUserKerm(uuid) {
   const kermuIndex = userKermCount.findIndex(el => el["uuid"] === uuid)
 
-  kermuIndex !== -1 ?
+  if (kermuIndex !== -1) {
     userKermCount[kermuIndex]["count"]++
-    : userKermCount.push({
+  } else {
+    userKermCount.push({
       "uuid": uuid,
       "count": 1
     })
+  }
 }
 
 function isMarkedAsKermu(uuid) {
@@ -85,26 +94,26 @@ function resetAllKerms() {
   userKermCount = []
 }
 
-setInterval(() => resetAllKerms(), 1000 * 60 * parse(process.env.KIANO_KUFT_RESET_KERMU_LIST_IN_MINUTES))
+setInterval(() => resetAllKerms(), 1000 * 60 * resetKermInMinutes)
 
 bot.on('text', async (ctx) => {
 
 
-    if (ctx.message.chat.id === groupID && includesKeywords(ctx.message.text)) {
-      if (ctx.message.text.split(" ").length === 1) {
-        const uuid = ctx.message.from.id
-        addUserKerm(uuid)
-        const replyMessages = isMarkedAsKermu(uuid) ? kermuSpecialMessages : kermnarizMessages
-        await ctx.reply(`${replyMessages[getSemiRandomArrayIndex(replyMessages)]}`,
-          {reply_to_message_id: ctx.message.message_id});
-      } else if (ctx.message.text.split(" ").includes("کیان") && ctx.message.text.split(" ").includes("بغ")) {
-        await ctx.reply(`نکن مسافریان. اذیتم نکن دردم میاد😢`,
-          {reply_to_message_id: ctx.message.message_id});
-      } else {
-        await ctx.reply(`${replyMessages[getSemiRandomArrayIndex(replyMessages)]}\n${process.env.KIANO_KUFT_MENTION_USERNAME}`,
-          {reply_to_message_id: ctx.message.message_id});
-      }
+  if (ctx.message.chat.id === groupID && includesKeywords(ctx.message.text)) {
+    if (ctx.message.text.split(" ").length === 1) {
+      const uuid = ctx.message.from.id
+      addUserKerm(uuid)
+      const replyMessages = isMarkedAsKermu(uuid) ? kermuSpecialMessages : kermnarizMessages
+      await ctx.reply(`${replyMessages[getSemiRandomArrayIndex(replyMessages)]}`,
+        {reply_to_message_id: ctx.message.message_id});
+    } else if (ctx.message.text.split(" ").includes("کیان") && ctx.message.text.split(" ").includes("بغ")) {
+      await ctx.reply(`نکن مسافریان. اذیتم نکن دردم میاد😢`,
+        {reply_to_message_id: ctx.message.message_id});
+    } else {
+      await ctx.reply(`${replyMessages[getSemiRandomArrayIndex(replyMessages)]}\n${mentionUsername}`,
+        {reply_to_message_id: ctx.message.message_id});
     }
+  }
 
 });
 
