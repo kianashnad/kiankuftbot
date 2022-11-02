@@ -4,6 +4,7 @@ import {Telegraf} from 'telegraf';
 import {parse} from "dotenv";
 
 const bot = new Telegraf(process.env.KIANO_KUFT_BOT_TOKEN);
+console.log(`Bot Token => ${process.env.KIANO_KUFT_BOT_TOKEN}`)
 
 let lastReplyArrayIndex = -1
 
