@@ -8,7 +8,6 @@ A funny telegram bot to mention me in telegram when someone calls my name in an 
 
 1. Clone the repo.
 2. Create a telegram bot using the `@BotFather` Bot and get the bot token.
-3. Get your account UUID (you can use a bot like `@userinfobot`).
 4. prepare the .env file and place the telegram bot token, telegram UUID, and the rest of ENV variables.
 5. make sure that you seprated the the array ENVs by a comma (`,`) and there's no space before or after the commas.
 6. run `yarn start`
