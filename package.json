@@ -22,7 +22,7 @@
     "format": "eslint ./src/** --fix",
     "lint": "eslint ./src/**",
     "dev": "nodemon",
-    "build": "rimraf ./.build && tsc",
+    "build": "rimraf ./.build && tsc -p tsconfig-build.json",
     "start": "yarn build && node .build/main.js"
   },
   "engines": {

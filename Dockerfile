@@ -1,6 +1,6 @@
 FROM node:14-alpine3.16
 
-ENV NODE_OPTIONS="–max_old_space_size=80"
+ENV NODE_OPTIONS="–max_old_space_size=450"
 
 # Create src directory
 WORKDIR /usr/src/app
