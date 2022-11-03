@@ -19,8 +19,8 @@ also Nodemon is configured for local development, run by `yarn dev`
 - You can deploy it via docker and docker and docker compose as well.
 - In the `docker-compose.yml` file, the resource usage is limited to these:
    ```
-  cpus: '0.025'
-  memory: 100M
+  cpus: '0.100'
+  memory: 500M
   ```
   change them if you desire to.
 
