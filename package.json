@@ -23,7 +23,7 @@
     "lint": "eslint ./src/**",
     "dev": "nodemon",
     "build": "rimraf ./.build && tsc",
-    "start": "yarn lint && yarn build && node .build/main.js"
+    "start": "yarn build && node .build/main.js"
   },
   "engines": {
     "node": "=14"
