@@ -1,3 +1,4 @@
+.build
 .yarn/*
 !.yarn/patches
 !.yarn/plugins
@@ -101,11 +102,11 @@ web_modules/
 .cache
 .parcel-cache
 
-# Next.js build output
+# Next.js build build
 .next
 out
 
-# Nuxt.js build / generate output
+# Nuxt.js build / generate build
 .nuxt
 dist
 
@@ -115,7 +116,7 @@ dist
 # https://nextjs.org/blog/next-9-1#public-directory-support
 # public
 
-# vuepress build output
+# vuepress build build
 .vuepress/dist
 
 # vuepress v2.x temp and cache directory
@@ -139,56 +140,19 @@ dist
 # Stores VSCode versions used for testing VSCode extensions
 .vscode-test
 
-# yarn v2
-.yarn/cache
-.yarn/unplugged
-.yarn/build-state.yml
-.yarn/install-state.gz
 .pnp.*
 
-### Node Patch ###
-# Serverless Webpack directories
 .webpack/
 
-# Optional stylelint cache
 
-# SvelteKit build / generate output
 .svelte-kit
 
-### VisualStudioCode ###
-.vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
-!.vscode/extensions.json
-!.vscode/*.code-snippets
+.vscode
 
-# Local History for Visual Studio Code
 .history/
 
-# Built Visual Studio Code Extensions
 *.vsix
 
-### VisualStudioCode Patch ###
-# Ignore all local history of files
 .history
 .ionide
 
-### yarn ###
-# https://yarnpkg.com/getting-started/qa#which-files-should-be-gitignored
-
-.yarn/*
-!.yarn/releases
-!.yarn/patches
-!.yarn/plugins
-!.yarn/sdks
-!.yarn/versions
-
-# if you are NOT using Zero-installs, then:
-# comment the following lines
-!.yarn/cache
-
-# and uncomment the following lines
-# .pnp.*
-
-# End of https://www.toptal.com/developers/gitignore/api/visualstudiocode,node,yarn

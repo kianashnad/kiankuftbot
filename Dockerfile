@@ -1,6 +1,6 @@
 FROM node:14-alpine3.16
 
-# Create app directory
+# Create src directory
 WORKDIR /usr/src/app
 
 COPY . .
@@ -16,6 +16,5 @@ RUN apk add --no-cache --virtual .build-deps \
     apk del .build-deps
 
 RUN yarn install --frozen-lockfile
-
 
 CMD [ "yarn", "start" ]
