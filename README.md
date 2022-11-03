@@ -20,7 +20,7 @@ also Nodemon is configured for local development, run by `yarn dev`
 - In the `docker-compose.yml` file, the resource usage is limited to these:
    ```
   cpus: '0.025'
-  memory: 50M
+  memory: 100M
   ```
   change them if you desire to.
 
