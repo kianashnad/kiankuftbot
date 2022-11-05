@@ -9,7 +9,7 @@ function getEnv(envName: string): string {
   const returningVariable = process.env[envName];
   // Checking if the variable is not undefined, or empty
   if (returningVariable && returningVariable.length > 0) {
-    return returningVariable;
+    return returningVariable.replace(/\\n/gm, '\n');
   }
   // If the variable is undefined or empty, print an error and exit the process
   console.error(`error loading env variable ${envName}`);
@@ -33,7 +33,6 @@ const mentionUsername: string = getEnv('KIANO_KUFT_MENTION_USERNAME');
 const replyMessages: string[] = getEnv('KIANO_KUFT_REPLY_MESSAGES').split(',');
 const lowAngerMessages: string[] = getEnv('KIANO_KUFT_LOW_ANGER_MESSAGES').split(',');
 const highAngerMessages: string[] = getEnv('KIANO_KUFT_HIGH_ANGER_MESSAGES').split(',');
-
 // This is where the trolling records will be saved
 let userTrollingRecords: AngerRecord[] = [];
 // The trolling records will be erased after a duration of time, set in the envs
@@ -105,7 +104,9 @@ bot.on('text', async ctx => {
       // Checking if the user is marked as a troll or not.
       const selectedAngryMessages = isMarkedAsTroll(uuid) ? highAngerMessages : lowAngerMessages;
       //Sending a reply to the user
-      await ctx.reply(`${selectedAngryMessages[getSemiRandomArrayIndex(selectedAngryMessages)]}`, { reply_to_message_id: ctx.message.message_id });
+      await ctx.reply(`${selectedAngryMessages[getSemiRandomArrayIndex(selectedAngryMessages)]}`, {
+        reply_to_message_id: ctx.message.message_id,
+      });
     } else {
       //  When the user is not considered trolling the bot, it will receive a normal message.
       await ctx.reply(`${replyMessages[getSemiRandomArrayIndex(replyMessages)]}\n${mentionUsername}`, {
