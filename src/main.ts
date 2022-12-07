@@ -104,23 +104,26 @@ function isAdmin(uuid: number) {
 
 // When a telegram user sends a text in a group that the bot is, or the bots' private chat, this block executes.
 bot.on('text', async ctx => {
-  // Checking if the message is in the group determined in envs & if the text includes the keywords
-  if (ctx.message.chat.id === groupID && includesKeywords(ctx.message.text)) {
-    // Checking if it's only one word (if yes, then it's considered trolling)
-    if (ctx.message.text.split(' ').length === 1) {
-      // Sender user uuid
-      const uuid = ctx.message.from.id;
+  // Checking if the message is in the group determined in envs
+  if (ctx.message.chat.id === groupID) {
+    // Sender user uuid
+    const uuid = ctx.message.from.id;
 
-      // If the sender is an admin, and is sending a command
-      if (isAdmin(uuid) && (ctx.message.text.toLowerCase() === '!disablewlc' || ctx.message.text.toLowerCase() === '!enablewlc')) {
-        // Toggle the welcomeMessage state
-        isWelcomeMessageEnabled = !welcomeMessageDisabledMessage;
+    // If the sender is an admin, and is sending a "togglewlc" command
+    if (isAdmin(uuid) && ctx.message.text.toLowerCase() === '!togglewlc') {
+      // Toggle the welcomeMessage state
+      isWelcomeMessageEnabled = !isWelcomeMessageEnabled;
 
-        // Send a success message
-        await ctx.reply(isWelcomeMessageEnabled ? welcomeMessageEnabledMessage : welcomeMessageDisabledMessage, {
-          reply_to_message_id: ctx.message.message_id,
-        });
-      } else {
+      // Send a success message
+      await ctx.reply(isWelcomeMessageEnabled ? welcomeMessageEnabledMessage : welcomeMessageDisabledMessage, {
+        reply_to_message_id: ctx.message.message_id,
+      });
+    }
+
+    // if the text includes the keywords
+    if (includesKeywords(ctx.message.text)) {
+      // Checking if it's only one word (if yes, then it's considered trolling)
+      if (ctx.message.text.split(' ').length === 1) {
         // Adding a trolling record for the sender user
         addUserTrollingRecord(uuid);
         // Checking if the user is marked as a troll or not.
@@ -129,12 +132,12 @@ bot.on('text', async ctx => {
         await ctx.reply(`${selectedAngryMessages[getSemiRandomArrayIndex(selectedAngryMessages)]}`, {
           reply_to_message_id: ctx.message.message_id,
         });
+      } else {
+        //  When the user is not considered trolling the bot, it will receive a normal message.
+        await ctx.reply(`${replyMessages[getSemiRandomArrayIndex(replyMessages)]}\n${mentionUsername}`, {
+          reply_to_message_id: ctx.message.message_id,
+        });
       }
-    } else {
-      //  When the user is not considered trolling the bot, it will receive a normal message.
-      await ctx.reply(`${replyMessages[getSemiRandomArrayIndex(replyMessages)]}\n${mentionUsername}`, {
-        reply_to_message_id: ctx.message.message_id,
-      });
     }
   }
 });
