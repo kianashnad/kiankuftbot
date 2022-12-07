@@ -9,6 +9,7 @@ function getEnv(envName: string): string {
   const returningVariable = process.env[envName];
   // Checking if the variable is not undefined, or empty
   if (returningVariable && returningVariable.length > 0) {
+
     return returningVariable.replace(/\\n/gm, '\n');
   }
   // If the variable is undefined or empty, print an error and exit the process
@@ -33,6 +34,13 @@ const mentionUsername: string = getEnv('KIANO_KUFT_MENTION_USERNAME');
 const replyMessages: string[] = getEnv('KIANO_KUFT_REPLY_MESSAGES').split(',');
 const lowAngerMessages: string[] = getEnv('KIANO_KUFT_LOW_ANGER_MESSAGES').split(',');
 const highAngerMessages: string[] = getEnv('KIANO_KUFT_HIGH_ANGER_MESSAGES').split(',');
+
+const welcomeMessageEnabledMessage: string = getEnv('KIANO_KUFT_WELCM_MSG_ENABLED_MSG');
+const welcomeMessageDisabledMessage: string = getEnv('KIANO_KUFT_WELCM_MSG_DISABLED_MSG');
+const adminIDs: string[] = getEnv('KIANO_KUFT_ADMINS').split(',');
+
+let isWelcomeMessageEnabled = true;
+
 // This is where the trolling records will be saved
 let userTrollingRecords: AngerRecord[] = [];
 // The trolling records will be erased after a duration of time, set in the envs
@@ -89,6 +97,11 @@ function isMarkedAsTroll(uuid: number) {
   return angerRecordIndex !== -1 && userTrollingRecords[angerRecordIndex].count >= angerThreshold;
 }
 
+//  This function checks if a User UUID is for an admin
+function isAdmin(uuid: number) {
+  return adminIDs.includes(uuid.toString());
+}
+
 // When a telegram user sends a text in a group that the bot is, or the bots' private chat, this block executes.
 bot.on('text', async ctx => {
   // Checking if the message is in the group determined in envs & if the text includes the keywords
@@ -98,15 +111,25 @@ bot.on('text', async ctx => {
       // Sender user uuid
       const uuid = ctx.message.from.id;
 
-      // Adding a trolling record for the sender user
-      addUserTrollingRecord(uuid);
+      // If the sender is an admin, and is sending a command
+      if (isAdmin(uuid) && (ctx.message.text.toLowerCase() === '!disablewlc' || ctx.message.text.toLowerCase() === '!enablewlc')) {
+        // Toggle the welcomeMessage state
+        isWelcomeMessageEnabled = !welcomeMessageDisabledMessage;
 
-      // Checking if the user is marked as a troll or not.
-      const selectedAngryMessages = isMarkedAsTroll(uuid) ? highAngerMessages : lowAngerMessages;
-      //Sending a reply to the user
-      await ctx.reply(`${selectedAngryMessages[getSemiRandomArrayIndex(selectedAngryMessages)]}`, {
-        reply_to_message_id: ctx.message.message_id,
-      });
+        // Send a success message
+        await ctx.reply(isWelcomeMessageEnabled ? welcomeMessageEnabledMessage : welcomeMessageDisabledMessage, {
+          reply_to_message_id: ctx.message.message_id,
+        });
+      } else {
+        // Adding a trolling record for the sender user
+        addUserTrollingRecord(uuid);
+        // Checking if the user is marked as a troll or not.
+        const selectedAngryMessages = isMarkedAsTroll(uuid) ? highAngerMessages : lowAngerMessages;
+        //Sending a reply to the user
+        await ctx.reply(`${selectedAngryMessages[getSemiRandomArrayIndex(selectedAngryMessages)]}`, {
+          reply_to_message_id: ctx.message.message_id,
+        });
+      }
     } else {
       //  When the user is not considered trolling the bot, it will receive a normal message.
       await ctx.reply(`${replyMessages[getSemiRandomArrayIndex(replyMessages)]}\n${mentionUsername}`, {
@@ -118,7 +141,7 @@ bot.on('text', async ctx => {
 
 // Yes! The bot also welcomes the newcomers.
 bot.on('new_chat_members', async ctx => {
-  if (ctx.message.chat.id === groupID && ctx.message.new_chat_members) {
+  if (isWelcomeMessageEnabled && ctx.message.chat.id === groupID && ctx.message.new_chat_members) {
     const messageText = getEnv('KIANO_KUFT_NEW_MEMBER_WELCOME_MESSAGE');
     await ctx.reply(messageText, { reply_to_message_id: ctx.message.message_id });
   }
