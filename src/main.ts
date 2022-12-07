@@ -115,9 +115,7 @@ bot.on('text', async ctx => {
       isWelcomeMessageEnabled = !isWelcomeMessageEnabled;
 
       // Send a success message
-      await ctx.reply(isWelcomeMessageEnabled ? welcomeMessageEnabledMessage : welcomeMessageDisabledMessage, {
-        reply_to_message_id: ctx.message.message_id,
-      });
+      await ctx.sendMessage(isWelcomeMessageEnabled ? welcomeMessageEnabledMessage : welcomeMessageDisabledMessage);
     }
 
     // if the text includes the keywords
