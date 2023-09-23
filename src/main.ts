@@ -4,12 +4,11 @@ dotenv.config();
 
 import { Telegraf } from 'telegraf';
 
-// This function will make loading of env variables fail-safe
+// This function will make loading of env variables fool-proof
 function getEnv(envName: string): string {
   const returningVariable = process.env[envName];
-  // Checking if the variable is not undefined, or empty
+  // Checking if the variable is not undefined or empty
   if (returningVariable && returningVariable.length > 0) {
-
     return returningVariable.replace(/\\n/gm, '\n');
   }
   // If the variable is undefined or empty, print an error and exit the process
@@ -25,6 +24,7 @@ interface AngerRecord {
 
 // Initializing some variables from envs
 console.info('INITIALIZATION:', 'ENV VARIABLES');
+
 const bot = new Telegraf(getEnv('KIANO_KUFT_BOT_TOKEN'));
 const groupID: number = parseInt(getEnv('KIANO_KUFT_TG_GROUP_ID'));
 const keywords: string[] = getEnv('KIANO_KUFT_KEYWORDS').toLowerCase().split(',');
@@ -118,7 +118,7 @@ bot.on('text', async ctx => {
       await ctx.sendMessage(isWelcomeMessageEnabled ? welcomeMessageEnabledMessage : welcomeMessageDisabledMessage);
     }
 
-    // if the text includes the keywords
+    // If the text includes the keywords
     if (includesKeywords(ctx.message.text)) {
       // Checking if it's only one word (if yes, then it's considered trolling)
       if (ctx.message.text.split(' ').length === 1) {

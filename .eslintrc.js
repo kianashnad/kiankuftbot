@@ -22,6 +22,5 @@ module.exports = {
     eqeqeq: 'error',
     'capitalized-comments': 'error',
     'dot-notation': 'error',
-    endOfLine: "auto",
   },
 };
